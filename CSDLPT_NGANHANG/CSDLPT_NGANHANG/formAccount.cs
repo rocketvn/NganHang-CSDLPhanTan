@@ -32,13 +32,28 @@ namespace CSDLPT_NGANHANG
         String macn = "";
         DateTime dt= DateTime.Today;
 
-
+        private string cmd1 = "SELECT * FROM NGANHANG WHERE MACN = 'BENTHANH'";
+        private string cmd2 = "SELECT * FROM NGANHANG WHERE MACN = 'TANDINH'";
+        
         private void formAccount_Load(object sender, EventArgs e)
         {
             dSm.EnforceConstraints = false;
-
-            this.taiKhoanTableAdapter.Connection.ConnectionString = Program.connstr;
-            this.taiKhoanTableAdapter.Fill(this.dSm.TaiKhoan);
+    
+            cbbChinhanh.DataSource = Program.bds_dspm;
+            cbbChinhanh.DisplayMember = "TENCN";
+            cbbChinhanh.ValueMember = "TENSERVER";
+            cbbChinhanh.SelectedIndex = Program.mChinhanh;
+            
+            if (Program.mChinhanh == 0)
+            {
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd1, Program.connstr);
+                adapter.Fill(this.dSm.TaiKhoan);
+            }
+            else
+            {
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd2, Program.connstr);
+                adapter.Fill(this.dSm.TaiKhoan);
+            }
 
             this.gD_GOIRUTTableAdapter.Connection.ConnectionString = Program.connstr;
             this.gD_GOIRUTTableAdapter.Fill(this.dSm.GD_GOIRUT);
@@ -46,10 +61,7 @@ namespace CSDLPT_NGANHANG
             btUdo.Enabled = btSave.Enabled = false;
 
             macn = ((DataRowView)bdsTK[0])["MACN"].ToString();
-            cbbChinhanh.DataSource = Program.bds_dspm;
-            cbbChinhanh.DisplayMember = "TENCN";
-            cbbChinhanh.ValueMember = "TENSERVER";
-            cbbChinhanh.SelectedIndex = Program.mChinhanh;
+           
             if (Program.mGroup == "NGANHANG")
             {
                 cbbChinhanh.Enabled = true;
@@ -296,8 +308,18 @@ namespace CSDLPT_NGANHANG
             }
             else
             {
-                this.taiKhoanTableAdapter.Connection.ConnectionString = Program.connstr;
-                this.taiKhoanTableAdapter.Fill(this.dSm.TaiKhoan);
+                if (Program.mChinhanh == 0)
+                {
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd1, Program.connstr);
+                    dSm.Clear();
+                    adapter.Fill(this.dSm.TaiKhoan);
+                }
+                else
+                {
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd2, Program.connstr);
+                    dSm.Clear();
+                    adapter.Fill(this.dSm.TaiKhoan);
+                }
 
                 this.gD_GOIRUTTableAdapter.Connection.ConnectionString = Program.connstr;
                 this.gD_GOIRUTTableAdapter.Fill(this.dSm.GD_GOIRUT);
